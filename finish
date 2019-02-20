@@ -1,0 +1,386 @@
+
+#include <iostream>
+#include <iomanip>
+#include "glut.h"
+
+
+
+#pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "glut32.lib")
+using namespace std;
+float angle = 0.0;
+float angle2 = 0.0;
+float zoom = 0;
+float angle3 = 0.0;
+double Z1 = 0, Z2 = 0;
+
+int matr[22][22] = {    { -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1 },
+						{ -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1 },
+						{ -1,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,0,0,0,0,-1,-1,-1,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,0,0,0,0,-1,0,-1,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,0,0,0,0,-1,-1,-1,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1 },
+						{ -1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,-1 },
+						{ -1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,-1 },
+						{ -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1 },
+};
+
+////////////////////////////////////// console ////////////////////////////////////////////////////
+void volna()
+{
+	for (int i = 1; i<21; i++)
+	{
+		for (int j = 1; j < 21; j++)
+		{
+			switch (matr[i][j]) {
+			case 0:cout << setw(3) << ".";
+				break;
+			case -1: cout << setw(3) << "#";
+				break;
+			case -2: cout << setw(3) << "A";
+				break;
+			case -3: cout << setw(3) << "B";
+				break;
+			case -4: cout << setw(3) << "-";
+				break;
+			default:  cout << setw(3) << matr[i][j];
+			};
+		}
+		cout << endl;
+	}
+	cout << endl << endl;
+};
+
+void print()
+{
+	for (int i = 1; i<21; i++)
+	{
+		for (int j = 1; j < 21; j++)
+		{
+			switch (matr[i][j]) {
+				break;
+			case -1: cout << setw(3) << "#";
+				break;
+			case -2: cout << setw(3) << "A";
+				break;
+			case -3: cout << setw(3) << "B";
+				break;
+			case -4: cout << setw(3) << "o";
+				break;
+			default:  cout << setw(3) << ".";
+			};
+		}
+		cout << endl;
+	}
+	cout << endl << endl;
+};
+////////////////////////////////////////////////      OPENGL           /////////////////////////////////////////////////////////////////
+void special_kb(int key, int, int)
+{
+	if (key == GLUT_KEY_LEFT)
+		angle += 1.8;
+	if (key == GLUT_KEY_RIGHT)
+		angle -= 1.8;
+	if (key == GLUT_KEY_DOWN)
+		angle2 += 1.8;
+	if (key == GLUT_KEY_UP)
+		angle2 -= 1.8;
+	if (key == GLUT_KEY_PAGE_DOWN)
+		angle3 += 1.8;
+	if (key == GLUT_KEY_PAGE_UP)
+		angle3 -= 1.8;
+
+	if (key == GLUT_KEY_HOME)
+		zoom++;
+	if (key == GLUT_KEY_END)
+		zoom--;
+
+	glutPostRedisplay();
+
+
+}
+
+void read_key(unsigned char key, int, int)
+{
+	if (27 == key)
+		exit(0);
+	if (key == 'a')
+		Z1 += 0.5;
+	if (key == 'd')
+		Z1 -= 0.5;
+	if (key == 'w')
+		Z2 -= 0.5;
+	if (key == 's')
+		Z2 += 0.5;
+	glutPostRedisplay();
+}
+
+///////////////////////////////////////////////////////////////// RENDER SCENE  //////////////////////////////////////////////
+void RenderScene() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+	glViewport(0, 0, 600, 600);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(45.0f, 1.0f, 0.1f, 100.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glTranslatef(0, 0, -34);
+	glTranslatef(Z1, Z2, zoom);
+	glRotatef(180 , 1, 0, 0);
+	glRotatef(angle, 0, 0, 1);
+	glRotatef(angle2, 1, 0, 0);
+	glRotatef(angle3, 0, 1, 0);
+
+	for (int i = -10; i < 10; i++)
+	{
+		for (int j = -10; j < 10; j++)
+		{
+
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glColor3f(1, 1, 1);
+			glBegin(GL_QUADS);
+			glVertex3f(j, i, 0);
+			glVertex3f(j + 1, i, 0);
+			glVertex3f(j + 1, i + 1, 0);
+			glVertex3f(j, i + 1, 0);
+			glEnd();
+		}
+	}
+
+
+
+	for (int i = -10; i < 10; i++)
+	{
+		for (int j = -10; j < 10; j++)
+		{
+			/*if ((matr[i + 11][j + 11] > 0) || (matr[i + 11][j + 11] == 0))
+			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				glColor3f(1, 1, 1);
+				glBegin(GL_QUADS);
+				glVertex3f(j, i, 0);
+				glVertex3f(j + 1, i, 0);
+				glVertex3f(j + 1, i + 1, 0);
+				glVertex3f(j, i + 1, 0);
+				glEnd();
+			}*/
+			if (matr[i + 11][j + 11] == -1)
+			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				glColor3f(1, 0, 1);
+				glBegin(GL_QUADS);
+				glVertex3f(j, i, 0);
+				glVertex3f(j + 1, i, 0);
+				glVertex3f(j + 1, i + 1, 0);
+				glVertex3f(j, i + 1, 0);
+				glEnd();
+			}
+			if (matr[i + 11][j + 11] == -2)
+			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				glColor3f(1, 0, 0);
+				glTranslatef(j + 0.5, i+0.5, 0);
+				glutSolidSphere(0.5, 19, 34);
+				glTranslatef(-j - 0.5 , -i - 0.5, 0);
+				glEnd();
+			}
+			if (matr[i + 11][j + 11] == -3)
+			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				glColor3f(0, 0, 1);
+				glTranslatef(j + 0.5, i + 0.5, 0);
+				glutSolidSphere(0.5, 19, 34);
+				glTranslatef(-j - 0.5, -i - 0.5, 0);
+				glEnd();
+			}
+			if (matr[i + 11][j + 11] == -4)
+			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				glColor3f(1, 1, 0);
+				glBegin(GL_QUADS);
+				glVertex3f(j, i, -0.5);
+				glVertex3f(j + 1, i, -0.5);
+				glVertex3f(j + 1, i + 1, -0.5);
+				glVertex3f(j, i + 1, -0.5);
+				glEnd();
+			}
+		}
+	}
+	glEnd();
+
+	glutSwapBuffers();
+}
+//////////////////////////////////////////////////// MAIN //////////////////////////////////////////////////
+int main(int argc, char *argv[]) {
+
+	print();
+	int Ax = 0, Ay = 0, Bx = 0, By = 0;
+vvodA:
+	cout << "vvedite koordinati A :";
+	cin >> Ax >> Ay;
+	if ((Ax < 1 || Ax > 20 || Ay < 1 || Ay > 20))
+	{
+		cout << "Bi Bishli za predel polya" << endl << "vvedite koordinati povtorno" << endl << endl;
+		goto vvodA;
+	}
+	else
+	{
+		if (matr[Ax][Ay] == 0)
+		{
+			matr[Ax][Ay] = -2;
+		}
+		else
+		{
+			cout << "nevozmojno postavit' na prepyatstvie" << endl << "vvedite koordinati povtorno" << endl << endl;
+			goto vvodA;
+		}
+	}
+vvodB:
+	cout << "vvedite koordinati B :";
+	cin >> Bx >> By;
+	if ((Bx < 1 || Bx > 20 || By < 1 || By > 20))
+	{
+		cout << "Bi Bishli za predel polya" << endl << "vvedite koordinati povtorno" << endl << endl;
+		goto vvodB;
+	}
+	else
+	{
+		if (matr[Bx][By] == 0)
+		{
+			matr[Bx][By] = -3;
+		}
+		else
+		{
+			if (matr[Bx][By] == -1)
+			{
+				cout << "nevozmojno postavit' na prepyatstvie" << endl << "vvedite koordinati povtorno" << endl << endl;
+				goto vvodB;
+			}
+			else
+			{
+				cout << "A i B ne mogut stoyat' na odnoy kletke" << endl;
+				goto vvodB;
+			}
+		}
+	}
+	print();
+	if ((Ax == Bx && Ay == By + 1) || (Ax == Bx && Ay == By - 1) || (Ay == By && Ax == Bx + 1) || (Ay == By && Ax == Bx - 1))
+	{
+		cout << "A i B stoyat ryadom" << endl;
+		goto hf;
+	}
+	if (Ax == By && Ay == By)
+		goto gg;
+	if (matr[Ax][Ay + 1] != -1)
+		matr[Ax][Ay + 1] = 1;
+	if (matr[Ax][Ay - 1] != -1)
+		matr[Ax][Ay - 1] = 1;
+	if (matr[Ax - 1][Ay] != -1)
+		matr[Ax - 1][Ay] = 1;
+	if (matr[Ax + 1][Ay] != -1)
+		matr[Ax + 1][Ay] = 1;
+	int wave = 1;
+	for (wave;wave<200; ++wave)
+	{
+		for (int i = 1; i<21;++i)
+		{
+			for (int j = 1; j < 21; ++j)
+			{
+				if (matr[i][j] == wave)
+				{
+					if ((matr[i][j + 1] == 0) && (matr[i][j] != -3))
+						matr[i][j + 1] = wave + 1;
+					if ((matr[i][j - 1] == 0) && (matr[i][j] != -3))
+						matr[i][j - 1] = wave + 1;
+					if ((matr[i + 1][j] == 0) && (matr[i][j] != -3))
+						matr[i + 1][j] = wave + 1;
+					if ((matr[i - 1][j] == 0) && (matr[i][j] != -3))
+						matr[i - 1][j] = wave + 1;
+				}
+
+			}
+		}
+	}
+	volna();
+	int min = 400;
+	int A = 0;
+	int B = 0;
+	if (((matr[Bx + 1][By] == -1) || (matr[Bx + 1][By] == 0)) && ((matr[Bx][By + 1] == -1) || (matr[Bx][By + 1] == 0)) && ((matr[Bx - 1][By] == -1) || (matr[Bx - 1][By] == 0)) && ((matr[Bx][By - 1] == -1) || (matr[Bx][By - 1] == 0)))
+	{
+		cout << "puti net" << endl;
+		goto gg;
+	}
+	else {
+		for (int i = Bx, j = By; min != 1; )
+		{
+			if (matr[i + 1][j] < min && matr[i + 1][j] > 0)
+			{
+				min = matr[i + 1][j];
+				A = i + 1;
+				B = j;
+			}
+			if (matr[i][j + 1] < min && matr[i][j + 1] > 0)
+			{
+				min = matr[i][j + 1];
+				A = i;
+				B = j + 1;
+			}
+			if (matr[i - 1][j] < min && matr[i - 1][j] > 0)
+			{
+				min = matr[i - 1][j];
+				A = i - 1;
+				B = j;
+			}
+			if (matr[i][j - 1] < min && matr[i][j - 1] > 0)
+			{
+				min = matr[i][j - 1];
+				A = i;
+				B = j - 1;
+			}
+			i = A;
+			j = B;
+			matr[i][j] = -4;
+		}
+	}
+	volna();
+	print();
+
+
+
+
+
+	hf:
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitWindowPosition(100, 100);
+	glutInitWindowSize(600, 600);
+	glutCreateWindow("Пример вывода 3D графики");
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.19, 0.19, 0.19, 1);
+	//////////////////////////////////////////////////////////   /////////////////////////////////////////////
+	glutDisplayFunc(RenderScene);
+	glutKeyboardFunc(read_key);
+	glutSpecialFunc(special_kb);
+	glutMainLoop();
+	gg:
+	print();
+	return 0;
+}
